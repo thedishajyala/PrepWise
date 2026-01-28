@@ -66,7 +66,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
         toast.success("Account created successfully. Please sign in.");
         router.push("/sign-in");
-      } else {
+      } else if (type === "sign-in") {
         const { email, password } = data;
 
         const userCredential = await signInWithEmailAndPassword(
@@ -89,9 +89,13 @@ const AuthForm = ({ type }: { type: FormType }) => {
         toast.success("Signed in successfully.");
         router.push("/");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
-      toast.error(`There was an error: ${error}`);
+      if (error.code === "auth/invalid-credential") {
+        toast.error("Invalid email or password. Please try again.");
+      } else {
+        toast.error(`There was an error: ${error.message}`);
+      }
     }
   };
 
